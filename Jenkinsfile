@@ -51,15 +51,15 @@ pipeline {
         }
     }
 
-    post {
-        always {
-            // this block always is executed don't meter success or failed
-        }
-        success {
-            // if stages executed successfully
-        }
-        failure {
-            // if same stage failed
-        }
-    }
+//    post {
+//        always {
+//            // this block always is executed don't meter success or failed
+//        }
+//        success {
+//            // if stages executed successfully
+//        }
+//        failure {
+//            // if same stage failed
+//        }
+//    }
 }
