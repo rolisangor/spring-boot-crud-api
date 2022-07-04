@@ -1,5 +1,3 @@
-def gv
-
 pipeline {
     agent any
 
@@ -12,7 +10,7 @@ pipeline {
         stage("build") {
             steps {
                 script {
-                    gv.buildApp()
+                    sh "mvn --version"
                 }
             }
         }
@@ -20,7 +18,7 @@ pipeline {
         stage("test") {
             steps {
                 script {
-                    gv.testApp()
+                    sh "ls -a"
                 }
             }
         }
@@ -28,7 +26,7 @@ pipeline {
         stage("deploy") {
              steps {
                  script {
-                     gv.deployApp()
+                     sh "echo deploy"
                  }
              }
         }
