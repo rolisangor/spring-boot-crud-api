@@ -13,7 +13,7 @@ pipeline {
                     sh "mvn --version"
                     sh "mvn compile"
                     sh "mvn package -Dmaven.test.skip=true"
-                    sh "sudo docker-compose -f docker-compose-arm64.yaml up -d"
+                    sh "sudo docker-compose -f docker-compose_arm64.yaml up -d"
                 }
             }
         }
