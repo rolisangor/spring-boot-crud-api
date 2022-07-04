@@ -42,7 +42,8 @@ pipeline {
                  withCredentials([
                          usernamePassword(credentialsId: 'test', usernameVariable: USER, passwordVariable: PWD)
                  ]) {
-                     sh "some script ${USER} and ${PWD}"
+                     sh 'echo $USER'
+                     sh 'echo $PWD'
                  }
              }
         }
