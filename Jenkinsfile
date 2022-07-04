@@ -27,7 +27,7 @@ pipeline {
              steps {
                  script {
                      sh "echo deploy"
-                     sh "docker --version"
+                     sh "sudo docker ps -a"
                  }
              }
         }
