@@ -4,7 +4,6 @@ pipeline {
     agent any
     environment {
         NEW_VERSION = '1.3.0'
-        SERVER_CREDENTIALS = credentials('test')
     }
     tools {
         maven 'Maven'
@@ -33,8 +32,6 @@ pipeline {
             }
             steps {
                 echo 'testing the application'
-                echo "testing with ${SERVER_CREDENTIALS}"
-                sh "${SERVER_CREDENTIALS}"
             }
         }
 
