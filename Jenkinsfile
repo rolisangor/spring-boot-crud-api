@@ -11,6 +11,8 @@ pipeline {
             steps {
                 script {
                     sh "mvn --version"
+                    sh "mvn compile"
+                    sh "mvn package"
                 }
             }
         }
