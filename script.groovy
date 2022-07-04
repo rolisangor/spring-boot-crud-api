@@ -4,4 +4,12 @@ def buildApp() {
     sh "mvn --version"
 }
 
+def testApp() {
+    echo 'testing the application'
+}
+
+def deployApp() {
+    echo 'deploy the application'
+}
+
 return this
