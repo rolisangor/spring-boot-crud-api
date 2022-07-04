@@ -4,10 +4,12 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.Instant;
+import java.util.UUID;
 
 @ToString
 @Getter
@@ -15,9 +17,12 @@ import java.time.Instant;
 @MappedSuperclass
 public abstract class BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    protected Long id;
+    @Id @Type(type = "pg-uuid")
+    private UUID id;
+
+    public BaseEntity() {
+        this.id = UUID.randomUUID();
+    }
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false, nullable = false)
@@ -30,4 +35,5 @@ public abstract class BaseEntity {
     @Column
     @Version
     protected int version;
+
 }
