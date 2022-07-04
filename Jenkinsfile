@@ -1,5 +1,3 @@
-//CODE_CHANGES = getGitChanges()
-
 pipeline {
     agent any
     environment {
@@ -39,25 +37,7 @@ pipeline {
 
              steps {
                  echo 'deploy the application'
-                 withCredentials([
-                         usernamePassword(credentialsId: 'test', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')
-                 ]) {
-                     echo $USERNAME
-                     echo $PASSWORD
-                 }
              }
         }
     }
-
-//    post {
-//        always {
-//            // this block always is executed don't meter success or failed
-//        }
-//        success {
-//            // if stages executed successfully
-//        }
-//        failure {
-//            // if same stage failed
-//        }
-//    }
 }
