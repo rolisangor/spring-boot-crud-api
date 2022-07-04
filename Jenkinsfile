@@ -13,6 +13,7 @@ pipeline {
                     sh "mvn --version"
                     sh "mvn compile"
                     sh "mvn package -Dmaven.test.skip=true"
+                    sh "docker-compose --version"
                 }
             }
         }
