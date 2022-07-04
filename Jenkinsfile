@@ -12,7 +12,7 @@ pipeline {
                 script {
                     sh "mvn --version"
                     sh "mvn compile"
-                    sh "mvn package"
+                    sh "mvn package -Dmaven.test.skip=true"
                 }
             }
         }
