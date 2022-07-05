@@ -30,19 +30,15 @@ pipeline {
 
         stage("test") {
             steps {
-                script {
-                    sh "mvn test"
-                }
+                sh "echo test"
             }
         }
 
         stage("deploy") {
              steps {
-                 script {
-                     sh "echo deploy"
-                     sh 'echo $DOCKER_PSW | sudo docker login -u $DOCKER_USR --password-stdin'
-                     sh 'sudo docker push rolisangor/crud-app:latest'
-                 }
+                 sh "echo deploy"
+                 sh 'echo $DOCKER_PSW | sudo docker login -u $DOCKER_USR --password-stdin'
+                 sh 'sudo docker push rolisangor/crud-app:latest'
              }
         }
     }
