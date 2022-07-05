@@ -45,9 +45,5 @@ pipeline {
                  }
              }
         }
-
-        always {
-            sh 'sudo docker logout'
-        }
     }
 }
