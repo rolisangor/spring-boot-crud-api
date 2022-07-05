@@ -16,7 +16,7 @@ pipeline {
                 script {
                     sh "sudo docker-compose -f docker-compose_arm64.yaml down"
                     sh "sudo docker image rm rolisangor/crud-app"
-                    sh "$DOCKER"
+                    sh "echo $DOCKER.USR"
                 }
             }
         }
