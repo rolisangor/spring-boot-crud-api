@@ -5,6 +5,10 @@ pipeline {
         maven 'Maven'
     }
 
+    environment {
+        DOCKER = credentials("Docker Hub")
+    }
+
     stages {
 
         stage("pre-build") {
@@ -12,6 +16,7 @@ pipeline {
                 script {
                     sh "sudo docker-compose -f docker-compose_arm64.yaml down"
                     sh "sudo docker image rm rolisangor/crud-app"
+                    sh "$DOCKER"
                 }
             }
         }
