@@ -13,17 +13,17 @@ pipeline {
 
         stage("pre-build") {
             steps{
-                sh "sudo docker-compose -f docker-compose_arm64.yaml down || true"
+                sh "sudo docker-compose -f docker-compose.yaml down || true"
                 sh "sudo docker image rm rolisangor/crud-app || true"
             }
         }
 
-        stage("build") {
+        stage("package") {
             steps {
                 script {
                     sh "mvn compile"
                     sh "mvn package -Dmaven.test.skip=true"
-                    sh "sudo docker-compose -f docker-compose_arm64.yaml up -d"
+                    sh "sudo docker-compose -f docker-compose.yaml up -d"
                 }
             }
         }
@@ -31,7 +31,7 @@ pipeline {
         stage("test") {
             steps {
                 script {
-                    sh "echo test app"
+                    sh "mvn test"
                 }
             }
         }
