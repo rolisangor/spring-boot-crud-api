@@ -4,7 +4,7 @@ services:
   crud-app:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.arm64
     image: rolisangor/crud-app
     restart: always
     depends_on:
@@ -14,7 +14,6 @@ services:
       - DB_HOST_URL=jdbc:postgresql://db:5432/crud_db
       - DB_USERNAME=postgres
       - DB_PASSWORD=root
-      - JDK_VERSION=arm64v8/openjdk:17
     ports:
       - 9000:9000
 
