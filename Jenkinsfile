@@ -13,11 +13,8 @@ pipeline {
 
         stage("pre-build") {
             steps{
-                script {
-                    sh "sudo docker-compose -f docker-compose_arm64.yaml down"
-                    sh "sudo docker image rm rolisangor/crud-app"
-                    sh "echo $DOCKER.USR"
-                }
+                sh "sudo docker-compose -f docker-compose_arm64.yaml down"
+                sh "sudo docker image rm rolisangor/crud-app || true"
             }
         }
 
@@ -43,7 +40,8 @@ pipeline {
              steps {
                  script {
                      sh "echo deploy"
-                     sh "sudo docker ps -a"
+                     sh 'echo $DOCKER_PSW | sudo docker login -u $DOCKER_USR --password-stdin'
+                     sh 'sudo docker push rolisangor/crud-app:latest'
                  }
              }
         }
