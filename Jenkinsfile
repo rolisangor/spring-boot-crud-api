@@ -7,6 +7,15 @@ pipeline {
 
     stages {
 
+        stage("pre-build") {
+            steps{
+                script {
+                    sh "sudo docker-compose -f docker-compose_arm64.yaml down"
+                    sh "sudo docker image rm rolisangor/crud-app"
+                }
+            }
+        }
+
         stage("build") {
             steps {
                 script {
