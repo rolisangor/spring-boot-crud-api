@@ -13,7 +13,7 @@ pipeline {
 
         stage("pre-build") {
             steps{
-                sh "sudo docker-compose -f docker-compose_arm64.yaml down"
+                sh "sudo docker-compose -f docker-compose_arm64.yaml down || true"
                 sh "sudo docker image rm rolisangor/crud-app || true"
             }
         }
@@ -44,6 +44,10 @@ pipeline {
                      sh 'sudo docker push rolisangor/crud-app:latest'
                  }
              }
+        }
+
+        always {
+            sh 'sudo docker logout'
         }
     }
 }
