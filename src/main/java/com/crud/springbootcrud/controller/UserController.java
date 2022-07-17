@@ -15,7 +15,7 @@ import java.util.List;
 @Slf4j
 @AllArgsConstructor
 @RequestMapping("/api/user")
-@PropertySource("classpath:application.yml")
+@CrossOrigin(origins = "*")
 public class UserController {
 
     private final UserService userService;
@@ -33,5 +33,10 @@ public class UserController {
     @GetMapping("/greet")
     public ResponseEntity<String> greeting() {
         return ResponseEntity.ok("Hello Stranger");
+    }
+
+    @GetMapping("/error")
+    public ResponseEntity<?> error() {
+        return ResponseEntity.notFound().build();
     }
 }
