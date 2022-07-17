@@ -1,14 +1,12 @@
 package com.crud.springbootcrud.controller;
 
-import com.crud.springbootcrud.model.User;
+import com.crud.springbootcrud.model.dto.UserDto;
 import com.crud.springbootcrud.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.security.PublicKey;
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -21,22 +19,18 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<User> saveUser(@RequestBody User user) {
-        return ResponseEntity.ok(userService.save(user));
+    public ResponseEntity<UserDto> saveUser(@Valid @RequestBody UserDto userDto) {
+        return ResponseEntity.ok(userService.save(userDto));
     }
 
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
+    public ResponseEntity<List<UserDto>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    @GetMapping("/greet")
-    public ResponseEntity<String> greeting() {
-        return ResponseEntity.ok("Hello Stranger");
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.getUserById(id));
     }
 
-    @GetMapping("/error")
-    public ResponseEntity<?> error() {
-        return ResponseEntity.notFound().build();
-    }
 }

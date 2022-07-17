@@ -1,16 +1,15 @@
 package com.crud.springbootcrud.model;
 
 import lombok.*;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
 @Getter
 @Setter
-@Builder
 @Table(name = "users")
 public class User extends BaseEntity{
 
