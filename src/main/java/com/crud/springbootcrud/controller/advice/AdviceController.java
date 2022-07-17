@@ -5,6 +5,7 @@ import com.crud.springbootcrud.exception.UserNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -26,6 +27,13 @@ public class AdviceController {
         return getErrorBody(exception.getFieldError().getDefaultMessage(), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler({MissingServletRequestParameterException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseError handleMethodArgumentNotValidException(MissingServletRequestParameterException exception) {
+        log.error("MISSING_REQUEST_PARAM_HANDLE_MESSAGE: {}", exception.getMessage());
+        return getErrorBody(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseError handleConstraintViolation(ConstraintViolationException exception) {
@@ -44,12 +52,12 @@ public class AdviceController {
         return getErrorBody(exception.getMessage(), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler({Exception.class})
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ResponseError handleAllExceptions(Exception exception) {
-        log.error("DEFAULT_EXCEPTION_HANDLE_MESSAGE: {}", exception.getMessage());
-        return getErrorBody(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+//    @ExceptionHandler({Exception.class})
+//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+//    public ResponseError handleAllExceptions(Exception exception) {
+//        log.error("DEFAULT_EXCEPTION_HANDLE_MESSAGE: {}", exception.getMessage());
+//        return getErrorBody("Internal server error please try again later", HttpStatus.INTERNAL_SERVER_ERROR);
+//    }
 
     @ExceptionHandler({InternalServerError.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

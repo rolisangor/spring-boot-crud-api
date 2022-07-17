@@ -24,8 +24,8 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<UserDto>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
+    public ResponseEntity<List<UserDto>> getAllUsers(@RequestParam int page, @RequestParam int size) {
+        return ResponseEntity.ok(userService.getAllUsers(page, size));
     }
 
     @GetMapping("/{id}")
@@ -33,4 +33,14 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserById(id));
     }
 
+    @PutMapping
+    public ResponseEntity<UserDto> updateUser(@RequestBody UserDto userDto) {
+        return ResponseEntity.ok(userService.updateUser(userDto));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
+        return ResponseEntity.ok("User deleted successful");
+    }
 }

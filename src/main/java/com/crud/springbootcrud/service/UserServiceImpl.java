@@ -9,10 +9,13 @@ import com.crud.springbootcrud.repository.UserRepository;
 import com.crud.springbootcrud.service.mapper.UserMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -39,20 +42,39 @@ public class UserServiceImpl implements UserService{
 
     @Transactional(readOnly = true)
     @Override
-    public List<UserDto> getAllUsers() {
-        return userRepository.findAll().stream().map(userMapper::toUserDto).collect(Collectors.toList());
+    public List<UserDto> getAllUsers(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("firstName"));
+        return userMapper.toUserDtoList(userRepository.findAll(pageable).toList());
     }
 
     @Transactional(readOnly = true)
     @Override
     public UserDto getUserById(Long id) {
-        return userMapper.toUserDto(userRepository
-                        .findById(id)
-                        .orElseThrow(() -> new UserNotFoundException("User with id: " + id + " not found")));
+        return userMapper.toUserDto(userRepository.findById(id).orElseThrow(() ->
+                new UserNotFoundException("User with id: " + id + " not found")));
+    }
+
+    @Transactional
+    @Override
+    public UserDto updateUser(UserDto userDto) {
+        User user = userRepository.findById(userDto.getId()).orElseThrow(() ->
+                new UserNotFoundException("User with id: " + userDto.getId() + " not found"));
+        userMapper.updateFromUserDto(userDto, user);
+        return userMapper.toUserDto(user);
+    }
+
+    @Override
+    public void deleteUser(Long id) {
+        try {
+            userRepository.deleteById(id);
+        }catch (Exception e) {
+            throw new InternalServerError("Internal server error please try again");
+        }
     }
 
     private boolean existByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
+
 
 }
