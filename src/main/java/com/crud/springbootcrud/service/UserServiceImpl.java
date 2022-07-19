@@ -28,12 +28,15 @@ public class UserServiceImpl implements UserService{
     @Override
     public UserDto save(UserDto userDto) {
         if (existByEmail(userDto.getEmail())) {
+            log.error("User with email: {} already exist", userDto.getEmail());
             throw new BadRequestException("User with email: " + userDto.getEmail() + " already exist");
         }
         User user;
         try {
+            log.info("Start save user to database User: {}", userDto);
             user = userRepository.save(userMapper.toUser(userDto));
         }catch (Exception e) {
+            log.error("USER SAVE ERROR MESSAGE: {}", e.getMessage());
             throw new InternalServerError("Internal server error user save please try again");
         }
         return userMapper.toUserDto(user);
@@ -73,7 +76,8 @@ public class UserServiceImpl implements UserService{
         }
     }
 
-    private boolean existByEmail(String email) {
+    @Transactional
+    public boolean existByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
 
