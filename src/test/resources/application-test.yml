@@ -1,8 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/crud_test_db
-    username: postgres
-    password: root
+    url: jdbc:tc:postgresql:latest://crud_test_db
 
   jpa:
     hibernate.ddl-auto: none
