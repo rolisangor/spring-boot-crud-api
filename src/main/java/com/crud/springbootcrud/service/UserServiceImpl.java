@@ -14,7 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 
 @Service
@@ -35,7 +34,7 @@ public class UserServiceImpl implements UserService{
         try {
             user = userRepository.save(userMapper.toUser(userDto));
         }catch (Exception e) {
-            throw new InternalServerError("Internal server error please try again");
+            throw new InternalServerError("Internal server error user save please try again");
         }
         return userMapper.toUserDto(user);
     }
@@ -43,6 +42,7 @@ public class UserServiceImpl implements UserService{
     @Transactional(readOnly = true)
     @Override
     public List<UserDto> getAllUsers(int page, int size) {
+        if (page < 0 || size < 0) throw new BadRequestException("page and size must not be less than zero");
         Pageable pageable = PageRequest.of(page, size, Sort.by("firstName"));
         return userMapper.toUserDtoList(userRepository.findAll(pageable).toList());
     }
@@ -63,18 +63,18 @@ public class UserServiceImpl implements UserService{
         return userMapper.toUserDto(user);
     }
 
+    @Transactional
     @Override
     public void deleteUser(Long id) {
         try {
             userRepository.deleteById(id);
         }catch (Exception e) {
-            throw new InternalServerError("Internal server error please try again");
+            throw new InternalServerError("Internal server error user delete please try again");
         }
     }
 
     private boolean existByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
-
 
 }

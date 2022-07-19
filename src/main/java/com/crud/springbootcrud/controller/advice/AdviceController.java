@@ -1,5 +1,6 @@
 package com.crud.springbootcrud.controller.advice;
 
+import com.crud.springbootcrud.exception.BadRequestException;
 import com.crud.springbootcrud.exception.InternalServerError;
 import com.crud.springbootcrud.exception.UserNotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +32,13 @@ public class AdviceController {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseError handleMethodArgumentNotValidException(MissingServletRequestParameterException exception) {
         log.error("MISSING_REQUEST_PARAM_HANDLE_MESSAGE: {}", exception.getMessage());
+        return getErrorBody(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler({BadRequestException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseError handleMethodArgumentNotValidException(BadRequestException exception) {
+        log.error("BAD_REQUEST_HANDLE_MESSAGE: {}", exception.getMessage());
         return getErrorBody(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
