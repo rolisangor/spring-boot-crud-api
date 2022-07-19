@@ -12,7 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
-import java.util.List;
+import org.testcontainers.junit.jupiter.Testcontainers;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -22,8 +22,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @PropertySource("classpath:application-test.yml")
 @ActiveProfiles("test")
-@Sql(value = {"/user_db.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-@Sql(value = {"/drop_user_db.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+@Testcontainers
+@Sql(value = {"/user_data_before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@Sql(value = {"/user_data_after.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 class UserControllerTest {
 
     @Autowired
@@ -41,8 +42,6 @@ class UserControllerTest {
                 .jobTitle("Test Job Title First User")
                 .gender("Male")
                 .build();
-
-//        when(userService.save(any(UserDto.class))).thenReturn(userDto);
 
         mockMvc.perform(post("/api/user")
                 .content(asJsonString(userDto))
@@ -69,7 +68,6 @@ class UserControllerTest {
                 .build();
 
         mockMvc.perform(post("/api/user")
-
                 .content(asJsonString(userDto))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
@@ -81,30 +79,6 @@ class UserControllerTest {
     @Test
     @DisplayName("Get all users by page 1 and size 2")
     void getAllUsers() throws Exception {
-        List<UserDto> userDtos = List.of(
-                UserDto.builder()
-                        .id(1L)
-                        .firstName("FirstUserName")
-                        .lastName("FirstUserLast")
-                        .avatar("http://test-avatar-first-user.com")
-                        .company("Test Company First User")
-                        .email("first@email.com")
-                        .jobTitle("Test Job Title First User")
-                        .gender("Male")
-                        .build(),
-                UserDto.builder()
-                        .id(2L)
-                        .firstName("SecondUserName")
-                        .lastName("SecondUserLast")
-                        .avatar("http://test-avatar-second-user.com")
-                        .company("Test Company Second User")
-                        .email("second@email.com")
-                        .jobTitle("Test Job Title Second User")
-                        .gender("Female")
-                        .build());
-
-//        when(userService.getAllUsers(1, 2)).thenReturn(userDtos);
-
         mockMvc.perform(get("/api/user?page=1&size=2")
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -116,9 +90,6 @@ class UserControllerTest {
     @Test
     @DisplayName("Get users by non existent page")
     void getAllUsersByNonExistentPage() throws Exception {
-//        when(userService.getAllUsers(-1, 2)).thenThrow(
-//                new BadRequestException("page and size must not be less than zero"));
-
         mockMvc.perform(get("/api/user?page=-1&size=2")
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -130,59 +101,37 @@ class UserControllerTest {
     @Test
     @DisplayName("Get user by id")
     void getUserById() throws Exception {
-        UserDto userDto = UserDto.builder()
-                .id(1L)
-                .firstName("FirstUserName")
-                .lastName("FirstUserLast")
-                .avatar("http://test-avatar-first-user.com")
-                .company("Test Company First User")
-                .email("first@email.com")
-                .jobTitle("Test Job Title First User")
-                .gender("Male")
-                .build();
-
-//        when(userService.getUserById(anyLong())).thenReturn(userDto);
-
         mockMvc.perform(get("/api/user/{id}", 1L)
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.email").value("first@email.com"));
+                .andExpect(jsonPath("$.email").value("obracer0@umn.edu"));
     }
 
     @Test
     @DisplayName("Get user by id not found")
     void getUserByIdNotFound() throws Exception {
-//        when(userService.getUserById(anyLong())).thenThrow(new UserNotFoundException("User with id: 4 not found"));
-
-        mockMvc.perform(get("/api/user/{id}", 4L)
+        mockMvc.perform(get("/api/user/{id}", 23L)
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$").exists())
-                .andExpect(jsonPath("$.errors").value("User with id: 4 not found"));
-
+                .andExpect(jsonPath("$.errors").value("User with id: 23 not found"));
     }
 
     @Test
+    @DisplayName("User updated success")
     void updateUser() throws Exception {
         UserDto userDto = UserDto.builder()
                 .id(1L)
-                .firstName("FirstUserName")
-                .lastName("FirstUserLast")
-                .avatar("http://test-avatar-first-user.com")
-                .company("Test Company First User")
-                .email("first@email.com")
-                .jobTitle("Test Job Title First User")
+                .firstName("UpdatedUserName")
+                .lastName("UpdatedUserLast")
+                .avatar("http://test-avatar-Updated-user.com")
+                .company("Test Company Updated User")
+                .email("Updated@email.com")
+                .jobTitle("Test Job Title Updated User")
                 .gender("Male")
                 .build();
-
-        UserDto userDtoUpdated = UserDto.builder()
-                .id(1L)
-                .firstName("UpdatedUserName")
-                .build();
-
-//        when(userService.updateUser(any(UserDto.class))).thenReturn(userDtoUpdated);
 
         mockMvc.perform(put("/api/user")
                 .content(asJsonString(userDto))
@@ -194,11 +143,12 @@ class UserControllerTest {
     }
 
     @Test
+    @DisplayName("User deleted success")
     void deleteUser() throws Exception {
-//        when(userService.deleteUser(anyLong())).thenReturn(true); //TODO: userService.deleteUser() return boolean
         mockMvc.perform(delete("/api/user/{id}", 1L))
                 .andDo(print())
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(content().string("User deleted successful"));
     }
 
     public static String asJsonString(final Object obj) {
