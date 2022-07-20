@@ -1,7 +1,7 @@
 package com.crud.springbootcrud.controller;
 
 import com.crud.springbootcrud.model.dto.UserDto;
-import com.crud.springbootcrud.service.UserService;
+import com.crud.springbootcrud.service.user_service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -17,11 +17,6 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-
-    @PostMapping
-    public ResponseEntity<UserDto> saveUser(@Valid @RequestBody UserDto userDto) {
-        return ResponseEntity.ok(userService.save(userDto));
-    }
 
     @GetMapping
     public ResponseEntity<List<UserDto>> getAllUsers(@RequestParam int page, @RequestParam int size) {

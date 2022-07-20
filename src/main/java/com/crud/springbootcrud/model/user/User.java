@@ -1,7 +1,11 @@
-package com.crud.springbootcrud.model;
+package com.crud.springbootcrud.model.user;
 
+import com.crud.springbootcrud.model.BaseEntity;
+import com.crud.springbootcrud.model.role.Role;
 import lombok.*;
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Collection;
 
 @Entity
 @Builder
@@ -11,7 +15,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Table(name = "users")
-public class User extends BaseEntity{
+public class User extends BaseEntity {
 
     private String firstName;
     private String lastName;
@@ -20,5 +24,9 @@ public class User extends BaseEntity{
     private String company;
     private String avatar;
     private String jobTitle;
+    private String password;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    private Collection<Role> roles;
 
 }
