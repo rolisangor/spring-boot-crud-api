@@ -1,19 +1,24 @@
-package com.crud.springbootcrud.service;
+package com.crud.springbootcrud.service.user_service;
 
 import com.crud.springbootcrud.exception.BadRequestException;
 import com.crud.springbootcrud.exception.InternalServerError;
 import com.crud.springbootcrud.exception.UserNotFoundException;
-import com.crud.springbootcrud.model.User;
+import com.crud.springbootcrud.model.user.User;
 import com.crud.springbootcrud.model.dto.UserDto;
 import com.crud.springbootcrud.repository.UserRepository;
 import com.crud.springbootcrud.service.mapper.UserMapper;
+import com.crud.springbootcrud.service.role_service.RoleService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.management.relation.RoleNotFoundException;
 import java.util.List;
 
 @Service
@@ -23,20 +28,27 @@ public class UserServiceImpl implements UserService{
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
+    private final RoleService roleService;
 
     @Transactional
     @Override
-    public UserDto save(UserDto userDto) {
+    public UserDto save(UserDto userDto) throws RoleNotFoundException {
         if (existByEmail(userDto.getEmail())) {
             throw new BadRequestException("User with email: " + userDto.getEmail() + " already exist");
         }
-        User user;
-        try {
-            user = userRepository.save(userMapper.toUser(userDto));
-        }catch (Exception e) {
-            throw new InternalServerError("Internal server error user save please try again");
+        User currentUser = userMapper.toUser(userDto);
+//        currentUser.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        if (currentUser.getRoles() == null) {
+            currentUser.setRoles(List.of(roleService.getRoleByName("ROLE_USER")));
         }
-        return userMapper.toUserDto(user);
+//        try {
+//            user = userRepository.save(currentUser);
+//        }catch (Exception e) {
+//            log.error("Save user error: {}", e.getMessage());
+//            throw new InternalServerError("Internal server error user save please try again");
+//        }
+        return userMapper.toUserDto(currentUser);
     }
 
     @Transactional(readOnly = true)
@@ -71,6 +83,13 @@ public class UserServiceImpl implements UserService{
         }catch (Exception e) {
             throw new InternalServerError("Internal server error user delete please try again");
         }
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public User getUserByEmail(String email) {
+        if (!existByEmail(email)) throw new UserNotFoundException("User with email: " + email + " not found");
+        return userRepository.findByEmail(email);
     }
 
     private boolean existByEmail(String email) {

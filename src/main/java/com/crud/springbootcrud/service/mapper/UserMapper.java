@@ -1,6 +1,6 @@
 package com.crud.springbootcrud.service.mapper;
 
-import com.crud.springbootcrud.model.User;
+import com.crud.springbootcrud.model.user.User;
 import com.crud.springbootcrud.model.dto.UserDto;
 import org.mapstruct.*;
 import java.util.List;

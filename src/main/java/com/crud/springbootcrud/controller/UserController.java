@@ -1,11 +1,14 @@
 package com.crud.springbootcrud.controller;
 
 import com.crud.springbootcrud.model.dto.UserDto;
-import com.crud.springbootcrud.service.UserService;
+import com.crud.springbootcrud.service.user_service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
+
+import javax.management.relation.RoleNotFoundException;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -19,7 +22,8 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<UserDto> saveUser(@Valid @RequestBody UserDto userDto) {
+    @Secured("ROLE_ADMIN")
+    public ResponseEntity<UserDto> saveUser(@Valid @RequestBody UserDto userDto) throws RoleNotFoundException {
         return ResponseEntity.ok(userService.save(userDto));
     }
 
