@@ -1,9 +1,11 @@
 package com.crud.springbootcrud.model.dto;
 
+import com.crud.springbootcrud.model.Role;
 import lombok.*;
 
 import javax.validation.constraints.*;
 import java.time.Instant;
+import java.util.Collection;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -32,5 +34,8 @@ public class UserDto {
     private String avatar;
     private String jobTitle;
     private Instant createdAt;
+
+    private Collection<Role> roles;
+
 
 }

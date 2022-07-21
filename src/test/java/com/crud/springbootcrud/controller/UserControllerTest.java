@@ -2,6 +2,7 @@ package com.crud.springbootcrud.controller;
 
 import com.crud.springbootcrud.model.dto.UserDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,10 +10,15 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.testcontainers.junit.jupiter.Testcontainers;
+
+import java.util.Map;
+
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -46,7 +52,8 @@ class UserControllerTest {
         mockMvc.perform(post("/api/user")
                 .content(asJsonString(userDto))
                 .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
+                .accept(MediaType.APPLICATION_JSON)
+                .header("Authorization", getTestToken(true)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").exists())
                 .andExpect(jsonPath("$.email").value("first@email.com"))
@@ -69,17 +76,40 @@ class UserControllerTest {
         mockMvc.perform(post("/api/user")
                 .content(asJsonString(userDto))
                 .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
+                .accept(MediaType.APPLICATION_JSON)
+                .header("Authorization", getTestToken(true)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$").exists())
                 .andExpect(jsonPath("$.errors[0]").value("email must be present"));
     }
 
     @Test
+    @DisplayName("Save User with wrong role")
+    void saveUserWithWrongRole() throws Exception {
+        UserDto userDto = UserDto.builder()
+                .firstName("FirstUserName")
+                .lastName("FirstUserLast")
+                .avatar("http://test-avatar-first-user.com")
+                .company("Test Company First User")
+                .email("first@email.com")
+                .jobTitle("Test Job Title First User")
+                .gender("Male")
+                .build();
+
+        mockMvc.perform(post("/api/user")
+                .content(asJsonString(userDto))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .header("Authorization", getTestToken(false)))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
     @DisplayName("Get all users by page 1 and size 2")
     void getAllUsers() throws Exception {
         mockMvc.perform(get("/api/user?page=1&size=2")
-                .accept(MediaType.APPLICATION_JSON))
+                .accept(MediaType.APPLICATION_JSON)
+                .header("Authorization", getTestToken(true)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
@@ -90,7 +120,8 @@ class UserControllerTest {
     @DisplayName("Get users by non existent page")
     void getAllUsersByNonExistentPage() throws Exception {
         mockMvc.perform(get("/api/user?page=-1&size=2")
-                .accept(MediaType.APPLICATION_JSON))
+                .accept(MediaType.APPLICATION_JSON)
+                .header("Authorization", getTestToken(true)))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errors[0]")
@@ -99,19 +130,22 @@ class UserControllerTest {
 
     @Test
     @DisplayName("Get user by id")
+    @WithMockUser(username = "obracer0@umn.edu", authorities = {"ROLE_ADMIN"})
     void getUserById() throws Exception {
         mockMvc.perform(get("/api/user/{id}", 1L)
-                .accept(MediaType.APPLICATION_JSON))
+                .accept(MediaType.APPLICATION_JSON)
+                .header("Authorization", getTestToken(true)))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.email").value("obracer0@umn.edu"));
+                .andExpect(jsonPath("$.email").value("admin@email.com"));
     }
 
     @Test
     @DisplayName("Get user by id not found")
     void getUserByIdNotFound() throws Exception {
         mockMvc.perform(get("/api/user/{id}", 23L)
-                .accept(MediaType.APPLICATION_JSON))
+                .accept(MediaType.APPLICATION_JSON)
+                .header("Authorization", getTestToken(true)))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$").exists())
@@ -135,7 +169,8 @@ class UserControllerTest {
         mockMvc.perform(put("/api/user")
                 .content(asJsonString(userDto))
                 .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
+                .accept(MediaType.APPLICATION_JSON)
+                .header("Authorization", getTestToken(true)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.firstName").value("UpdatedUserName"));
@@ -144,18 +179,39 @@ class UserControllerTest {
     @Test
     @DisplayName("User deleted success")
     void deleteUser() throws Exception {
-        mockMvc.perform(delete("/api/user/{id}", 1L))
+        mockMvc.perform(delete("/api/user/{id}", 1L)
+                .header("Authorization", getTestToken(true)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string("User deleted successful"));
     }
 
-    public static String asJsonString(final Object obj) {
+    private static String asJsonString(final Object obj) {
         try {
             return new ObjectMapper().writeValueAsString(obj);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private String getTestToken(boolean isAdmin) throws Exception {
+        String url = isAdmin ?
+                "/oauth/token?grant_type=password&username=admin@email.com&password=admin" :
+                "/oauth/token?grant_type=password&username=user@email.com&password=user";
+
+        MvcResult result = mockMvc.perform(post(url)
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                .accept(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Basic c2VjcmV0SWQ6c2VjcmV0S2V5"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String token = result.getResponse().getContentAsString();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        Map<String, String> map = objectMapper.readValue(token, Map.class);
+        return "Bearer " + map.get("access_token");
     }
 
 }

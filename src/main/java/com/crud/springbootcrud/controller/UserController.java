@@ -5,6 +5,7 @@ import com.crud.springbootcrud.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
@@ -19,6 +20,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<UserDto> saveUser(@Valid @RequestBody UserDto userDto) {
         return ResponseEntity.ok(userService.save(userDto));
     }

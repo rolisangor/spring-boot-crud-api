@@ -1,39 +1,47 @@
-CREATE TABLE IF NOT EXISTS users
-(
-    id          bigserial          NOT NULL,
-    created_at  TIMESTAMP,
-    modified_at TIMESTAMP,
-    version     INT                NOT NULL,
-    first_name  VARCHAR(50),
-    last_name   VARCHAR(50),
-    email       VARCHAR(50) UNIQUE NOT NULL,
-    gender      VARCHAR(50),
-    company     VARCHAR(50),
-    avatar      VARCHAR(300),
-    job_title   VARCHAR(50),
+CREATE TABLE IF NOT EXISTS users (
+                                     id bigserial NOT NULL,
+                                     created_at TIMESTAMP,
+                                     modified_at TIMESTAMP,
+                                     version INT NOT NULL,
+                                     password VARCHAR(300),
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    email VARCHAR(250) UNIQUE NOT NULL,
+    gender VARCHAR(50),
+    company VARCHAR(150),
+    avatar VARCHAR (500),
+    job_title VARCHAR(150),
     PRIMARY KEY (id)
+    );
+
+CREATE TABLE IF NOT EXISTS role (
+                                    id bigserial NOT NULL,
+                                    created_at TIMESTAMP,
+                                    modified_at TIMESTAMP,
+                                    version INT NOT NULL,
+                                    name VARCHAR(50),
+    PRIMARY KEY (id)
+    );
+
+CREATE TABLE users_roles (
+                             user_id bigserial NOT NULL,
+                             roles_id bigserial NOT NULL
 );
 
-insert into users (created_at, modified_at, version, first_name, last_name, email, gender, company, avatar, job_title)
-values ('2022-07-04T13:08:21.899448819Z', '2022-07-04T13:08:21.899454817Z', 0, 'Odette', 'Bracer', 'obracer0@umn.edu',
-        'Female', 'Devify', 'https://robohash.org/quiatqueest.png?size=50x50&set=set1', 'Compensation Analyst');
+ALTER TABLE users_roles ADD CONSTRAINT fk_u_rid FOREIGN KEY(roles_id) REFERENCES role(id);
+ALTER TABLE users_roles ADD CONSTRAINT fk_u_uid FOREIGN KEY(user_id) REFERENCES users(id);
 
-insert into users (created_at, modified_at, version, first_name, last_name, email, gender, company, avatar, job_title)
-values ('2022-07-04T13:08:21.899448819Z', '2022-07-04T13:08:21.899454817Z', 0, 'Anastasie', 'Davidge',
-        'adavidge1@japanpost.jp', 'Female', 'Fivechat', 'https://robohash.org/estveniamtotam.png?size=50x50&set=set1',
-        'Occupational Therapist');
+INSERT INTO role (created_at, modified_at, version, name)VALUES('2022-07-04T13:08:21.899448819Z', '2022-07-04T13:08:21.899454817Z', 0, 'ROLE_ADMIN');
+INSERT INTO role (created_at, modified_at, version, name)VALUES('2022-07-04T13:08:21.899448819Z', '2022-07-04T13:08:21.899454817Z', 0, 'ROLE_USER');
 
-insert into users (created_at, modified_at, version, first_name, last_name, email, gender, company, avatar, job_title)
-values ('2022-07-04T13:08:21.899448819Z', '2022-07-04T13:08:21.899454817Z', 0, 'Tammie', 'Planque',
-        'tplanque2@google.de', 'Male', 'Youbridge', 'https://robohash.org/utestaccusantium.png?size=50x50&set=set1',
-        'Cost Accountant');
+INSERT INTO users (password, created_at, modified_at, version, first_name, last_name, email, gender, company, avatar, job_title)VALUES ('$2a$10$ZM3xc87L4QjvcdRU7Q1zaOBPzzk.kTu9AAw5akL8l74.dvV/zsUWW', '2022-07-04T13:08:21.899448819Z', '2022-07-04T13:08:21.899454817Z', 0, 'Odette', 'Bracer', 'admin@email.com','Female', 'Devify', 'https://robohash.org/quiatqueest.png?size=50x50&set=set1', 'Compensation Analyst');
+INSERT INTO users (password, created_at, modified_at, version, first_name, last_name, email, gender, company, avatar, job_title)VALUES ('$2a$10$lqSsIHHdzgbkW8ZWPFqIt.zZHykj3/s.Y/DT3lyl7geUiktw7va7O', '2022-07-04T13:08:21.899448819Z', '2022-07-04T13:08:21.899454817Z', 0, 'Anastasie', 'Davidge','user@email.com', 'Female', 'Fivechat', 'https://robohash.org/estveniamtotam.png?size=50x50&set=set1','Occupational Therapist');
+INSERT INTO users (password, created_at, modified_at, version, first_name, last_name, email, gender, company, avatar, job_title)VALUES ('$2a$10$lqSsIHHdzgbkW8ZWPFqIt.zZHykj3/s.Y/DT3lyl7geUiktw7va7O', '2022-07-04T13:08:21.899448819Z', '2022-07-04T13:08:21.899454817Z', 0, 'Tammie', 'Planque','tplanque2@google.de', 'Male', 'Youbridge', 'https://robohash.org/utestaccusantium.png?size=50x50&set=set1', 'Cost Accountant');
+INSERT INTO users (password, created_at, modified_at, version, first_name, last_name, email, gender, company, avatar, job_title)VALUES ('$2a$10$lqSsIHHdzgbkW8ZWPFqIt.zZHykj3/s.Y/DT3lyl7geUiktw7va7O', '2022-07-04T13:08:21.899448819Z', '2022-07-04T13:08:21.899454817Z', 0, 'Frazier', 'Sollas',        'fsollas3@ocn.ne.jp', 'Male', 'Topiczoom', 'https://robohash.org/fugitetconsequatur.png?size=50x50&set=set1',        'Chemical Engineer');
+INSERT INTO users (password, created_at, modified_at, version, first_name, last_name, email, gender, company, avatar, job_title)VALUES ('$2a$10$lqSsIHHdzgbkW8ZWPFqIt.zZHykj3/s.Y/DT3lyl7geUiktw7va7O', '2022-07-04T13:08:21.899448819Z', '2022-07-04T13:08:21.899454817Z', 0, 'Raye', 'Paladini',        'rpaladini4@imdb.com', 'Non-binary', 'Topicshots',        'https://robohash.org/ipsadelenitidolores.png?size=50x50&set=set1', 'Tax Accountant');
 
-insert into users (created_at, modified_at, version, first_name, last_name, email, gender, company, avatar, job_title)
-values ('2022-07-04T13:08:21.899448819Z', '2022-07-04T13:08:21.899454817Z', 0, 'Frazier', 'Sollas',
-        'fsollas3@ocn.ne.jp', 'Male', 'Topiczoom', 'https://robohash.org/fugitetconsequatur.png?size=50x50&set=set1',
-        'Chemical Engineer');
-
-insert into users (created_at, modified_at, version, first_name, last_name, email, gender, company, avatar, job_title)
-values ('2022-07-04T13:08:21.899448819Z', '2022-07-04T13:08:21.899454817Z', 0, 'Raye', 'Paladini',
-        'rpaladini4@imdb.com', 'Non-binary', 'Topicshots',
-        'https://robohash.org/ipsadelenitidolores.png?size=50x50&set=set1', 'Tax Accountant');
+INSERT INTO users_roles (user_id, roles_id) VALUES(1, 1);
+INSERT INTO users_roles (user_id, roles_id) VALUES(1, 2);
+INSERT INTO users_roles (user_id, roles_id) VALUES(2, 2);
+INSERT INTO users_roles (user_id, roles_id) VALUES(3, 2);
+INSERT INTO users_roles (user_id, roles_id) VALUES(4, 2);
