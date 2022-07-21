@@ -51,7 +51,6 @@ class UserControllerTest {
                 .andExpect(jsonPath("$").exists())
                 .andExpect(jsonPath("$.email").value("first@email.com"))
                 .andReturn();
-
     }
 
     @Test
