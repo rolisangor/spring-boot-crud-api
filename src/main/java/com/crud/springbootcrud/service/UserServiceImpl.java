@@ -27,15 +27,12 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-//@AllArgsConstructor
+@AllArgsConstructor
 public class UserServiceImpl implements UserService{
 
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private UserMapper userMapper;
-    @Autowired
-    private RoleService roleService;
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
+    private final RoleService roleService;
 
     @Transactional
     @Override
@@ -44,16 +41,9 @@ public class UserServiceImpl implements UserService{
             throw new BadRequestException("User with email: " + userDto.getEmail() + " already exist");
         }
         User currentUser = userMapper.toUser(userDto);
-//        currentUser.setPassword(passwordEncoder.encode(userDto.getPassword()));
         if (currentUser.getRoles() == null) {
             currentUser.setRoles(List.of(roleService.getRoleByName("ROLE_USER")));
         }
-//        try {
-//            user = userRepository.save(currentUser);
-//        }catch (Exception e) {
-//            log.error("Save user error: {}", e.getMessage());
-//            throw new InternalServerError("Internal server error user save please try again");
-//        }
         return userMapper.toUserDto(currentUser);
     }
 
@@ -95,6 +85,7 @@ public class UserServiceImpl implements UserService{
         return userRepository.existsByEmail(email);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(username).orElseThrow(() ->

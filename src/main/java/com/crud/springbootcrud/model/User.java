@@ -23,7 +23,7 @@ public class User extends BaseEntity{
     private String jobTitle;
 
     private String password;
-    @ManyToMany(fetch = FetchType.EAGER) //TODO: add join column
+    @ManyToMany(fetch = FetchType.EAGER)
     private Collection<Role> roles;
 
 }
