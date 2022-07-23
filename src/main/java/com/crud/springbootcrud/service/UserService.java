@@ -2,10 +2,11 @@ package com.crud.springbootcrud.service;
 
 import com.crud.springbootcrud.model.dto.UserDto;
 import com.crud.springbootcrud.model.dto.UserRegistrationDto;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.List;
 
-public interface UserService {
+public interface UserService extends UserDetailsService {
 
     UserDto save(UserRegistrationDto userRegistrationDto);
     List<UserDto> getAllUsers(int page, int size);
