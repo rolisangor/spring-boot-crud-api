@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.validation.constraints.*;
 import java.time.Instant;
+import java.util.Collection;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -32,5 +33,6 @@ public class UserDto {
     private String avatar;
     private String jobTitle;
     private Instant createdAt;
+    private RoleDto role;
 
 }

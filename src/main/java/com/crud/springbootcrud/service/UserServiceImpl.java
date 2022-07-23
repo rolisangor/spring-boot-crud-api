@@ -5,6 +5,7 @@ import com.crud.springbootcrud.exception.InternalServerError;
 import com.crud.springbootcrud.exception.UserNotFoundException;
 import com.crud.springbootcrud.model.User;
 import com.crud.springbootcrud.model.dto.UserDto;
+import com.crud.springbootcrud.model.dto.UserRegistrationDto;
 import com.crud.springbootcrud.repository.UserRepository;
 import com.crud.springbootcrud.service.mapper.UserMapper;
 import lombok.AllArgsConstructor;
@@ -12,31 +13,40 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @Service
 @Slf4j
 @AllArgsConstructor
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService, UserDetailsService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
+    private final RoleService roleService;
 
-    @Transactional
     @Override
-    public UserDto save(UserDto userDto) {
-        if (existByEmail(userDto.getEmail())) {
-            throw new BadRequestException("User with email: " + userDto.getEmail() + " already exist");
+    public UserDto save(UserRegistrationDto userRegistrationDto) {
+        if (existByEmail(userRegistrationDto.getEmail())) {
+            throw new BadRequestException("User with email: " + userRegistrationDto.getEmail() + " already exist");
         }
-        User user;
-        try {
-            user = userRepository.save(userMapper.toUser(userDto));
-        }catch (Exception e) {
-            throw new InternalServerError("Internal server error user save please try again");
+        if (!userRegistrationDto.getPassword().equals(userRegistrationDto.getRePassword())) {
+            throw new BadRequestException("Password and repeat password must be the same");
         }
-        return userMapper.toUserDto(user);
+        User user = userMapper.toUser(userRegistrationDto);
+        user.setPassword(passwordEncoder.encode(userRegistrationDto.getPassword()));
+        user.setRole(roleService.getByName("ROLE_USER"));
+        return userMapper.toUserDto(userRepository.save(user));
     }
 
     @Transactional(readOnly = true)
@@ -59,6 +69,9 @@ public class UserServiceImpl implements UserService{
     public UserDto updateUser(UserDto userDto) {
         User user = userRepository.findById(userDto.getId()).orElseThrow(() ->
                 new UserNotFoundException("User with id: " + userDto.getId() + " not found"));
+        if (userDto.getRole() != null) {
+            user.setRole(roleService.getByName(userDto.getRole().getName()));
+        }
         userMapper.updateFromUserDto(userDto, user);
         return userMapper.toUserDto(user);
     }
@@ -71,6 +84,15 @@ public class UserServiceImpl implements UserService{
         }catch (Exception e) {
             throw new InternalServerError("Internal server error user delete please try again");
         }
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(username).orElseThrow(() ->
+                new UserNotFoundException("User with email " + username + " not found"));
+        Collection<GrantedAuthority> grantedAuthority =
+                Collections.singleton(new SimpleGrantedAuthority(user.getRole().getName()));
+        return new org.springframework.security.core.userdetails.User(username, user.getPassword(), grantedAuthority);
     }
 
     private boolean existByEmail(String email) {

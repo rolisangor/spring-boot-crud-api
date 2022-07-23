@@ -30,51 +30,50 @@ class UserControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Test
-    @DisplayName("Save user success")
-    void saveUserSuccess() throws Exception {
-        UserDto userDto = UserDto.builder()
-                .firstName("FirstUserName")
-                .lastName("FirstUserLast")
-                .avatar("http://test-avatar-first-user.com")
-                .company("Test Company First User")
-                .email("first@email.com")
-                .jobTitle("Test Job Title First User")
-                .gender("Male")
-                .build();
+//    @Test
+//    @DisplayName("Save user success")
+//    void saveUserSuccess() throws Exception {
+//        UserDto userDto = UserDto.builder()
+//                .firstName("FirstUserName")
+//                .lastName("FirstUserLast")
+//                .avatar("http://test-avatar-first-user.com")
+//                .company("Test Company First User")
+//                .email("first@email.com")
+//                .jobTitle("Test Job Title First User")
+//                .gender("Male")
+//                .build();
+//
+//        mockMvc.perform(post("/api/user")
+//                .content(asJsonString(userDto))
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .accept(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$").exists())
+//                .andExpect(jsonPath("$.email").value("first@email.com"))
+//                .andReturn();
+//    }
 
-        mockMvc.perform(post("/api/user")
-                .content(asJsonString(userDto))
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$").exists())
-                .andExpect(jsonPath("$.email").value("first@email.com"))
-                .andReturn();
-
-    }
-
-    @Test
-    @DisplayName("Save user without email")
-    void saveUserWithoutEmail() throws Exception {
-        UserDto userDto = UserDto.builder()
-                .firstName("FirstUserName")
-                .lastName("FirstUserLast")
-                .avatar("http://test-avatar-first-user.com")
-                .company("Test Company First User")
-                .email(null)
-                .jobTitle("Test Job Title First User")
-                .gender("Male")
-                .build();
-
-        mockMvc.perform(post("/api/user")
-                .content(asJsonString(userDto))
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$").exists())
-                .andExpect(jsonPath("$.errors[0]").value("email must be present"));
-    }
+//    @Test
+//    @DisplayName("Save user without email")
+//    void saveUserWithoutEmail() throws Exception {
+//        UserDto userDto = UserDto.builder()
+//                .firstName("FirstUserName")
+//                .lastName("FirstUserLast")
+//                .avatar("http://test-avatar-first-user.com")
+//                .company("Test Company First User")
+//                .email(null)
+//                .jobTitle("Test Job Title First User")
+//                .gender("Male")
+//                .build();
+//
+//        mockMvc.perform(post("/api/user")
+//                .content(asJsonString(userDto))
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .accept(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isBadRequest())
+//                .andExpect(jsonPath("$").exists())
+//                .andExpect(jsonPath("$.errors[0]").value("email must be present"));
+//    }
 
     @Test
     @DisplayName("Get all users by page 1 and size 2")
@@ -105,7 +104,7 @@ class UserControllerTest {
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.email").value("obracer0@umn.edu"));
+                .andExpect(jsonPath("$.email").value("admin@email.com"));
     }
 
     @Test

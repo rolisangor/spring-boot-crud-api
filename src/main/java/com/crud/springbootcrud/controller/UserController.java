@@ -18,11 +18,6 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping
-    public ResponseEntity<UserDto> saveUser(@Valid @RequestBody UserDto userDto) {
-        return ResponseEntity.ok(userService.save(userDto));
-    }
-
     @GetMapping
     public ResponseEntity<List<UserDto>> getAllUsers(@RequestParam int page, @RequestParam int size) {
         return ResponseEntity.ok(userService.getAllUsers(page, size));

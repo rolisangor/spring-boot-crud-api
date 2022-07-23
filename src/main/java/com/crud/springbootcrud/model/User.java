@@ -20,5 +20,11 @@ public class User extends BaseEntity{
     private String company;
     private String avatar;
     private String jobTitle;
+    private String password;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
+    @JoinColumn(name = "role_id", nullable = false)
+    @ToString.Exclude
+    private Role role;
 
 }
