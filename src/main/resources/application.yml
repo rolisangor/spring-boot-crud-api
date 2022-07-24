@@ -22,6 +22,20 @@ spring:
     properties.hibernate.jdbc.batch_versioned_data: true
     properties.hibernate.temp.use_jdbc_metadata_defaults: false
 
+#  security:
+#    oauth2:
+#      resourceserver:
+#        jwt:
+#          issuer-uri: http://localhost:9000/oauth2/userinfo
+#          jwk-set-uri: http://localhost:9000/oauth2/refresh
 springdoc:
   swagger-ui:
     path: api-docs
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web: INFO
+    org.springframework.security: INFO
+    org.springframework.security.oauth2: INFO
+
