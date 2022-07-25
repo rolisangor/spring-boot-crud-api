@@ -12,16 +12,16 @@ public class JwksKeys {
 
     public static RSAKey generateRSAKey() {
         try {
-            KeyPairGenerator g = KeyPairGenerator.getInstance("RSA");
-            g.initialize(2048);
-            var keyPair = g.generateKeyPair();
+            KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
+            generator.initialize(2048);
+            var keyPair = generator.generateKeyPair();
 
             RSAPublicKey rsaPublicKey = (RSAPublicKey) keyPair.getPublic();
             RSAPrivateKey rsaPrivateKey = (RSAPrivateKey) keyPair.getPrivate();
 
             return new RSAKey.Builder(rsaPublicKey).privateKey(rsaPrivateKey).keyID(UUID.randomUUID().toString()).build();
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("Problem generating the keys");
+            throw new RuntimeException("Keys generator error: " + e.getMessage());
         }
     }
 }
