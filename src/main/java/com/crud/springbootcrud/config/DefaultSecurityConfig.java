@@ -26,6 +26,7 @@ public class DefaultSecurityConfig {
         return http.oauth2ResourceServer(
                 oauth2 -> oauth2.jwt().jwkSetUri("http://localhost:9000/oauth2/jwks")
         ).authorizeRequests()
+                .antMatchers("/api/auth/sign-up").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
