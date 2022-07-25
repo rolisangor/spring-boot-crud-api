@@ -20,7 +20,6 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
-import org.springframework.security.oauth2.server.authorization.config.ClientSettings;
 import org.springframework.security.oauth2.server.authorization.config.ProviderSettings;
 import org.springframework.security.web.SecurityFilterChain;
 import java.security.KeyPair;
@@ -51,18 +50,20 @@ public class AuthorizationSecurityConfig {
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-                .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
-                .authorizationGrantType(AuthorizationGrantType.PASSWORD)
+//                .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+//                .authorizationGrantType(AuthorizationGrantType.PASSWORD)
 //                .redirectUri("http://127.0.0.1:8080/login/oauth2/code/users-client-oidc")
                 .redirectUri("http://127.0.0.1:8080/authorized")
                 .scope(OidcScopes.OPENID)
-                .scope("read")
-                .scope("write")
-                .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
+//                .scope("read")
+//                .scope("write")
+//                .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
                 .build();
 
         return new InMemoryRegisteredClientRepository(registeredClient);
     }
+
+    //http://localhost:9000/oauth2/authorize?response_type=code&client_id=client1&redirect_uri=http://127.0.0.1:8080/authorized&scope=openid&code_challenge=QYPAZ5NU8vtl09wer&code_challenge_method=S256
 
     @Bean
     public JwtDecoder jwtDecoder(JWKSource<SecurityContext> jwkSource) {
