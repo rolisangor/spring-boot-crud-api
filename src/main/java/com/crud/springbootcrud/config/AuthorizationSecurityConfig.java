@@ -47,8 +47,7 @@ public class AuthorizationSecurityConfig {
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-                .scope("ROLE_ADMIN")
-                .scope("ROLE_USER")
+                .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
                 .scope(OidcScopes.OPENID)
                 .redirectUri("http://127.0.0.1:8080/authorized")
                 .build();
